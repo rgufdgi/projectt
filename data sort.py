@@ -29,22 +29,46 @@ for i in range(1, len(all_strs)):
     if '_' not in all_strs[i][0]:
         all_strs[i][0] = all_strs[i][0][:2].upper() \
             + '_' + all_strs[i][0][2:].capitalize()
-        print(all_strs[i])
+
+# исправление названий фильтров
+for i in range(1,len(all_strs)):
+    if all_strs[i][2][0].islower() == True:
+        all_strs[i][2] = all_strs[i][2].capitalize()
 
 # изменение типа данных числовых значений       
 for i in range(1,len(all_strs)):
     all_strs[i][1] = float(all_strs[i][1])
     all_strs[i][3] = float(all_strs[i][3])
     
-names_list = []
+names_list = []  #список имён объектов
 for i in range(1, len(all_strs)):
-    names_list.append(all_strs[0])
-    
-names_set = set(names_list)
-print(names_set) 
-    
+    if all_strs[i][0] not in names_list:
+        names_list.append(all_strs[i][0])
+
+# вывод имён объектов
+print('Имена объектов:')
+for i in range(len(names_list)):      
+    print(names_list[i]) 
+print()
+
+def available_filters(name, data_list):
+    filter_list = []
+    for i in range(1, len(data_list)):
+        if data_list[i][0] == name and data_list[i][2] not in filter_list:
+            filter_list.append(data_list[i][2])
+    return filter_list
+
+for i in range(len(names_list)):
+    print('Объект', names_list[i], 'доступен в следующих фильтрах:')
+    current_filters_list = available_filters(names_list[i], all_strs)
+    for j in range(len(current_filters_list)):
+        print(current_filters_list[j])
+    print()
+
+
+
 #for i in range(len(all_strs)):
-#    print(all_strs[i])
+ #   print(all_strs[i])
     
 
         
