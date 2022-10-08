@@ -7,7 +7,7 @@ all_strs = data_file.read().splitlines()  # создание списка стр
 for i in range(len(all_strs)):  
     all_strs[i] = all_strs[i].split() 
 
-# исправление перой строки   
+# исправление первой строки   
 all_strs[0] = ['Object', 'HJD, 24...', 'Filter', 'Magnitude']
 
 # удаление пустых элементов
@@ -64,21 +64,3 @@ for i in range(len(names_list)):
     for j in range(len(current_filters_list)):
         print(current_filters_list[j])
     print()
-
-
-
-#for i in range(len(all_strs)):
- #   print(all_strs[i])
-    
-
-        
-        
-
-
-
-
-
-
-
-
-
