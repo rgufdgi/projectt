@@ -58,9 +58,73 @@ def available_filters(name, data_list):
             filter_list.append(data_list[i][2])
     return filter_list
 
+# вывод фильтров
 for i in range(len(names_list)):
-    print('Объект', names_list[i], 'доступен в следующих фильтрах:')
+    print(f'Объект {names_list[i]} доступен в следующих фильтрах:')
     current_filters_list = available_filters(names_list[i], all_strs)
     for j in range(len(current_filters_list)):
         print(current_filters_list[j])
     print()
+
+# сортировка данных по юлианским датам 
+JD_list = []
+for i in range(1, len(all_strs)):
+    JD_list.append(all_strs[i][1])
+
+JD_list.sort()
+JD_list.insert(0, 'JD, 24')
+
+sorted_data_list = [0] * len(all_strs)
+sorted_data_list[0] = all_strs[0]
+
+all_strs_copy = all_strs.copy()
+for i in range(1, len(JD_list)):
+    for j in range(1, len(all_strs)):
+        if JD_list[i] == all_strs_copy[j][1]:
+            sorted_data_list[i] = all_strs_copy[j]
+            continue
+      
+#for i in range(len(sorted_data_list)):
+ #   print(sorted_data_list[i])
+""" 
+star_name = input('Введите имя объекта: ')
+
+if star_name not in names_list:
+    print('Нет данных для этого объекта')
+    star_name = input('Введите имя объекта: ')
+"""
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
