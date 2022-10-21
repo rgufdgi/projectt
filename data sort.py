@@ -65,7 +65,6 @@ for i in range(1, len(all_strs)):
             + '_' + all_strs[i][1].capitalize()
         del all_strs[i][1]
 
-
 # нет нижнего подчеркивания в названии:
 for i in range(1, len(all_strs)):
     if '_' not in all_strs[i][0]:
@@ -113,35 +112,62 @@ JD_list.insert(0, 'JD, 24')
 sorted_data_list = [0] * len(all_strs)
 sorted_data_list[0] = all_strs[0]
 
-all_strs_copy = all_strs.copy()
 for i in range(1, len(JD_list)):
     for j in range(1, len(all_strs)):
-        if JD_list[i] == all_strs_copy[j][1]:
-            sorted_data_list[i] = all_strs_copy[j]
+        if JD_list[i] == all_strs[j][1]:
+            sorted_data_list[i] = all_strs[j]
             continue
      
-    
-# список для конкретного объекта
+    # список для конкретного объекта
 star_name = input('Введите имя объекта: ')
+
 # проверка правильности вводимых данных
+"""
 while star_name not in names_list:
     print('Нет данных для этого объекта')
     star_name = input('Введите имя объекта: ')
-
+"""
 star_list = []
 for i in range(1, len(sorted_data_list)):
     if sorted_data_list[i][0] == star_name:
-        star_list.append(sorted_data_list[i])
-        
+         star_list.append(sorted_data_list[i])
+         
+flag = True
+while flag == True:
+    try:
+        error1 = 1 / len(star_list)
+        flag = False
+    except ZeroDivisionError:
+        print('Нет данных для этого объекта')
+        star_name = input('Введите имя объекта: ')
+        star_list = []
+        for i in range(1, len(sorted_data_list)):
+            if sorted_data_list[i][0] == star_name:
+                 star_list.append(sorted_data_list[i])
+         
 # конкретные фильтры
 all_filters = available_filters(star_name, star_list)
 filters = input('Введите названия фильтров, через пробел: ').split()
+
 # проверка правильности вводимых данных
+"""
 while set(filters).issubset(all_filters) == False:
     print('Нет данных для этих фильтров')
     print('Доступные фильтры:')
     print(*all_filters)
     filters = input('Введите названия фильтров, через пробел: ').split()
+"""
+flag2 = True
+while flag2 == True:
+    try:
+        error2 = 1 / (set(filters).issubset(all_filters))
+        flag2 = False
+    except ZeroDivisionError:
+        print('Нет данных для этих фильтров')
+        print('Доступные фильтры:')
+        print(*all_filters)
+        filters = input('Введите названия фильтров, через пробел: ').split()
+
         
 almost_final_list = []  # список для данной звезды с данными фильтрами
 for i in range(len(star_list)):
