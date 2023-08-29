@@ -30,7 +30,22 @@ def plot_maker(x, y, period):
       plt.scatter(x, y, color = 'black', s=10, marker='*')
       plt.show()
       
-      
+def minimum(values):   # нахождение минимальных элементов в списке
+    global list_of_freq
+    list_of_freq_copy = list_of_freq.copy()
+   
+    final_values = []
+    for _ in range(3):
+        min_elem = min(values)
+        min_i = values.index(min_elem)
+        final_values.append(list_of_freq_copy[min_i])
+        values.remove(min_elem)
+        list_of_freq_copy.remove(list_of_freq_copy[min_i])
+        
+    for i in range(len(final_values)):
+        final_values[i] = 1 / final_values[i]
+    return final_values    
+        
 # открытие файла    
 data_file = open('datata.txt')
 all_strs = data_file.read().splitlines()  # создание списка строк
@@ -51,11 +66,11 @@ main_list = all_strs
 period_min = 0.15
 period_max = 0.3
 d_per = 0.001  # шаг по периоду, он не нужен
-d_freq = 0.005
+d_freq = 0.0005
 #JD0 =  2446708.7712  # начальная эпоха 
 JD0 =  main_list[0][0]  # начальная эпоха 
-N_E = 30 # для фазовой группировки данных, разбиение блабла
-
+M = 15 # для фазовой группировки данных, разбиение блабла
+num = int(len(main_list) / M) # число точек в одном элементе
 
 # переход к частотам
 
@@ -96,14 +111,28 @@ while freq < freq_max:  # общий цикл, проходится по все�
     
     # метод фазовой группировки
     ipg = 0
-    
-    
+    for i in range(M):
+        all_dots = sorted_main_list[i * num : (i + 1) * num]        
+        dots = []
+        for j in range(len(all_dots)):
+            dots.append(all_dots[j][1])
+        ipg += variance(dots)
+        
+        
     list_of_freq.append(freq)
     list_of_ilk.append(ilk)
-    
+    list_of_ipg.append(ipg)
     freq += d_freq
 
-print(list_of_freq)
+#print(list_of_freq)
+
+finals_ilk = minimum(list_of_ilk)
+finals_ipg = minimum(list_of_ipg)
+
+print(finals_ilk)
+print(finals_ipg)
+print(M, d_freq)
+'''
 # нахождение минимальных элементов
 final_values = []
 for _ in range(5):
@@ -117,12 +146,12 @@ for i in range(len(final_values)):
     final_values[i] = 1 / final_values[i]
     
 print(final_values)
-
+'''
 ''' построение графиков '''
-
-for i in range(len(final_values)):
+# метод 1
+for i in range(len(finals_ilk)):
     for j in range(len(main_list)):
-        ph = (main_list[j][0] - JD0) / final_values[i] - int((main_list[j][0] - JD0) / final_values[i])
+        ph = (main_list[j][0] - JD0) / finals_ilk[i] - int((main_list[j][0] - JD0) / finals_ilk[i])
         main_list[j].append(ph)
     x_ax = []
     y_ax = []
@@ -131,96 +160,23 @@ for i in range(len(final_values)):
         
         x_ax.append(main_list[j][2])
         y_ax.append(main_list[j][1])
-    plot_maker(x_ax, y_ax, final_values[i])
+    plot_maker(x_ax, y_ax, finals_ilk[i])
     
     for i in range(len(main_list)):
         del main_list[i][2]
-'''
-fig1 = plt.figure()
-graph = fig1.add_subplot(111)
+# метод 2       
+for i in range(len(finals_ipg)):
+    for j in range(len(main_list)):
+        ph = (main_list[j][0] - JD0) / finals_ipg[i] - int((main_list[j][0] - JD0) / finals_ipg[i])
+        main_list[j].append(ph)
+    x_ax = []
+    y_ax = []
 
-graph.set_title(f'Фазовая кривая блеска, P = {final_values[0]}')
-graph.set_xlabel('Фаза')
-graph.set_ylabel('Звёздная величина')
-#graph.set_xlim([x1 - 1, x2])
-
-#graph.set_xticks([_ for _ in range(x1, x2, 2)] )
-plt.scatter(pixels_hor, light_hor, color = 'black', s=10, marker='*')
-plt.show()
-  ''' 
-''' зачем я вообще написала этот кусок
-disper_list = []  # список с фазами
-for i in range(len(all_strs)):
-    disper_list.append(all_strs[i][0])
-
-magnitudes = []  # список со звёздными величинами
-for i in range(len(all_strs)):
-    magnitudes.append(all_strs[i][1])
-
-for i in range(len(all_strs)):
-    disper_list[i] = [disper_list[i]]
-#print(disper_list)
-
-for i in range(len(disper_list)):
-    disper_list[i].append(magnitudes[i])
-    
-print(disper_list) 
-'''
-
-"""    
-period_list = []
-main_list = []
-second_square = variance(magnitudes)
-while period < period_max:
-    E = 0
-    new_list = []
-    list_of_var = []
-    for i in range(len(all_strs)):
-        new_elem = (all_strs[i][0] - JD0) / period - int((all_strs[i][0] - JD0) / period)
-        new_list.append(new_elem)
-    for i in range(len(new_list)):
-        disper_list[i].append(new_list[i])
-    # сортировка по фазам
-    new_list.sort()
-    sorted_disper_list = [0]*len(disper_list) 
-    for i in range(len(disper_list)):
-        for j in range(1, len(disper_list)):
-            if new_list[i] == disper_list[j][2]:
-                sorted_disper_list[i] = disper_list[j]
-                continue
-    sorted_disper_list.remove(0)
-    num = int(len(sorted_disper_list) / N_E)  # число значений в отрезке фазы
-    counter = num
-    var_list = []
-    while counter < len(sorted_disper_list):
-        magnitude_list = []
-        for i in range(counter + 1):
-            magnitude = sorted_disper_list[i][1]
-            magnitude_list.append(magnitude)
-        first_square = 0
+    for j in range(len(main_list)):
         
-        for i in range(num):
-            first_square += (magnitude_list[i + 1] - magnitude_list[i]) ** 2
-        disper = first_square / second_square
-        var_list.append(disper)
-        counter += num
-    main_list.append(sum(var_list))
-    period_list.append(period)
-    for i in range(len(disper_list)):
-        disper_list[i].pop(2)   
-    period += d_per
-    #print(var_list)
-    #print(len(var_list))
-print(main_list)
-print(period_list)
-for i in range(len(main_list)):
-    if main_list[i] == min(main_list):
-        index = i
-        break
-print(period_list[index])        
-print(len(main_list))
-print(len(period_list))
-print(index)
-"""
-
+        x_ax.append(main_list[j][2])
+        y_ax.append(main_list[j][1])
+    plot_maker(x_ax, y_ax, finals_ilk[i])
     
+    for i in range(len(main_list)):
+        del main_list[i][2]        
